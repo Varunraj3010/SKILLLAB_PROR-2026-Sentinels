@@ -1,3 +1,123 @@
+# SKILL LAB PRATICAL HACKATHON
+
+## Final Project README
+
+> **Project Weight:** 100%  
+> **Team Size:** 4/3 students  
+> **Project Duration:** 16 hours  
+> **Total Time Available:** 32 effort-hours per team  
+> **Project Type:** Playful, interactive, technology-based experience
+
+---
+
+# Before you begin
+
+## Fork and rename this repository
+
+After forking this repository, rename it using the format:
+
+`SKILLLAB_PROR-2026-TeamName`
+
+### Example
+
+`SKILLLAB_PROR-2026-AuroWizards`
+
+Do not keep the default repository name.
+
+---
+
+# How to use this README
+
+This file is your team’s **working project document**.
+
+You must keep updating it throughout the build period.  
+By the final review, this README should clearly show:
+
+- your idea,
+- your planning,
+- your design decisions,
+- your technical process,
+- your build progress,
+- your testing,
+- your failures and changes,
+- your final outcome.
+
+## Rules
+
+- Fill every section.
+- Do not delete headings.
+- If something does not apply, write `Not applicable` and explain why.
+- Add images, screenshots, sketches, links, and videos wherever useful.
+- Update task status and weekly logs regularly.
+- Use this file as evidence of process, not only as a final report.
+
+---
+
+# 1. Team Identity
+
+## 1.1 Studio / Group Name
+
+`Sentinels`
+
+## 1.2 Team Members
+
+| Name                  | Primary Role                    | Secondary Role   | Strengths Brought to the Project |
+| --------------        | ------------------------------- | --------------   | -------------------------------- |
+| `Varunraj Bhirud` | `Enhancement research` | `Documentation`|`Ideation`|
+| `Vibhuti Sawant`| `UI Design`|`Debugging`|`Designing visual platform`|
+| `Faiza Shaikh`|`Enhancement research`| `Prototyping`|`Creative thinking`|
+| `Shreya Korgaonkar` | `Implementation` | `Debugging`  | `Knowledge of Vitis and Xilinx SDK`|
+
+## 1.3 Project Title
+
+`"Digital circuit learning platform"`
+
+`(because Project-or)`
+
+<img width="1600" height="1131" alt="image" src="https://github.com/user-attachments/assets/c64bfbd4-b3b7-43d9-83ad-c203a5aa11bc" />
+
+## 1.4 One-Line Pitch
+
+`An interactive DVLSI learning emulator that simplifies complex circuit waveforms and experiments through real-time logic simulations.`
+
+## 1.5 Expanded Project Idea
+
+In 1–2 paragraphs, explain:
+
+- what your project is,
+- what kind of experience it creates,
+- what technologies are involved.
+
+**Response:**  
+`Our project is an interactive DVLSI learning emulator designed to help college students better understand experiments such as inverter, basic logic gates, 1-bit full adder, and 6T SRAM. Many students find waveform analysis and circuit behavior difficult to visualize during lab experiments, so this application simplifies those concepts by converting them into real-time logic simulations and waveform-style outputs. The aim is to create a student-friendly platform where users can select a circuit, provide inputs, and instantly observe the corresponding outputs and waveform transitions.`
+
+`The experience is designed to be simple, visual, and educational, making it easier for students to connect theoretical DVLSI concepts with practical understanding. The application focuses on interactive circuit input, truth-table validation, and waveform visualization, creating a logic-analyzer-like learning environment. In the current version, the FPGA board performs the selected gate operation and transmits the sampled input-output data to the laptop through UART. A Python-based visualization program using Matplotlib receives this data and plots the corresponding digital waveforms. This makes the system lightweight, easy to demonstrate, and suitable for academic demonstrations and lab support.`
+
+---
+
+# 2. Inspiration
+
+## 2.1 References
+
+List what inspired the project.
+
+| Source Type | Title / Link                                                        | What Inspired You                                                                         |
+| ----------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `[Video]`   | `https://www.instagram.com/reel/DW4CT7WCDry/?igsh=cXg3dzAxYmdncDBo` | `How projection mapping can be used to create interactive digital + physical experiences` |
+|             |                                                                     |                                                                                           |
+|             |                                                                     |                                                                                           |
+
+## 2.2 Original Twist
+
+What makes your project original?
+
+
+**Response:**  
+`The originality of this project lies in combining a logic analyzer with an educational learning platform. Unlike traditional logic analyzers that are used purely for debugging, this system is designed specifically for teaching DVLSI concepts. It visually connects truth tables, logic operations, and waveform behavior in real time. The integration of FPGA-based hardware interaction with software-based waveform visualization creates a more intuitive and engaging learning experience for students.`
+
+---
+
+
 # 3. Project Intent
 
 ## 3.1 User Journey 
