@@ -333,7 +333,7 @@ Include:
   The active RTL module (gate/adder/SRAM) computes outputs from the given inputs. A sampling counter triggers a UART transmission at a fixed interval (e.g., every 1 ms), packaging both input and output bus values into a data frame.
 
 - **Communication logic (FPGA → Laptop):**  
-  The UART TX module serializes the data frame and transmits it at 115200 baud via the USB-UART bridge. Each frame contains a start byte, input values, output values, and an end/checksum byte.
+  The UART TX module serializes the data frame and transmits it at 9600 baud via the USB-UART bridge. Each frame contains a start byte, input values, output values, and an end/checksum byte.
 
 - **Output behavior (FPGA):**  
   Computed output values are also driven to on-board LEDs for immediate visual feedback.
