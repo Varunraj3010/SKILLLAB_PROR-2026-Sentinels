@@ -320,26 +320,7 @@ Include:
 
 **Response:**  
 
-- **Startup behavior (FPGA):**  
-   Upon powering the Spartan-7 board, the system initiates a Power-On Reset (POR) sequence using a 4-cycle Global Set/Reset (GSR) shift register (rst_sr). This ensures all internal flip-flops, UART transmission state machines, and SRAM cell registers initialize to a known, stable zero state before accepting inputs.
 
-- **Input handling (FPGA):**  
-  Input handling operates continuously on every positive clock edge. The system reads the states of the 16 onboard slide switches (sw[15:0]). The switches are logically partitioned: sw[15:14] act as the mode selector (multiplexer control), sw[13:12] toggle advanced debugging features, and sw[2:0] act as the physical inputs (A, B, Cin, WL, D, WE) routed directly to the logic circuits. A 2-Flip-Flop synchronizer safely handles the physical debouncing and edge detection for sw[0].
-
-- **Sensor/State Reading:**  
-  While the system does not utilize external environmental sensors, it actively "senses" and captures internal hardware metrics. It calculates propagation delay by counting clock cycles between an input edge and an output change, and acts as a glitch detector by measuring pulse widths on the input pins to flag anomalies shorter than 50ns (5 clock cycles).
-
-- **Decision Logic:**
-    The core decision logic is handled by a high-speed multiplexer (implemented as a case statement). Based on the mode bits (sw[15:14]), the logic instantly decides which digital circuit (Inverter, Logic Gates, 1-bit Full Adder, or 6T SRAM model) has active control over the output buses. All logic gates are evaluated in parallel continuously, but the decision logic determines which result is latched for output.
-  
-- **Output Behavior:**
-    Output behavior is split into two immediate hardware responses. First, the resulting logic states are routed directly to the onboard LEDs (led[5:0]) for instantaneous visual feedback. Second, the input and output states are converted from binary to hexadecimal and routed to a 1kHz multiplexed 7-segment display driver, driving the anodes and cathodes to display the current states.
-
-- **Communication Logic:**
-    The communication logic relies on an 8N1 UART transmitter operating at 115200 baud. A periodic timer checks whether 200ms has passed or if any physical switch has changed state. If either condition is true, a trigger fires. The system latches the current inputs, outputs, mode string, and metrics, formatting them into a strict 72-byte JSON string (e.g., {"m":"GATE","i":"01","o":"3F",...}\n). A 3-state Finite State Machine (FSM) then kicks in, shifting this packet out byte-by-byte to the PC.
-
-- **Reset Behavior:**
-    When the internal reset is triggered, the system immediately aborts any active UART transmissions and resets the packet FSM to the IDLE state. The internal 6T SRAM behavioral latch (sram_q), propagation counters, glitch flags, and edge detection synchronizers are forcefully cleared to 0, readying the board for a fresh experiment.
 
 ## 8.3 Code Flowchart
 
@@ -357,7 +338,7 @@ Insert a flowchart showing your code logic.
 | ------------------------------------- | --------:| ------- | ------------ | --------------:| -------------------------------- | ----------------------------------------- |
 | `Xilinx Spartan-7 Boolean Board`      | `1`      | `Yes`   | `No`         | `0`            | `Spartan-7 XC7S50`               | `Lab-provided FPGA board for the project` |
 | `USB Cable (USB-A to Micro-USB)`      | `1`      | `Yes`   | `No`         | `0`            | `Standard Micro-USB`             | `Power + UART over single cable`          |
-| `Laptop / PC`                         | `1`      | `Yes`   | `No`         | `0`            | `Any OS with Python 3 + Vivado`  | `Waveform display and Vivado toolchain`   |
+| `Laptop`                         | `1`      | `Yes`   | `No`         | `0`            | `Any OS with Python 3 + Vivado`  | `Waveform display and Vivado toolchain`   |
 | `Python Libraries (pyserial, matplotlib, numpy)` | `—` | `No` | `No (free)` | `0`       | `pip installable`                | `Serial communication and waveform plot`  |
 
 ## 9.2 Material Justification
@@ -365,7 +346,7 @@ Insert a flowchart showing your code logic.
 Explain why you selected your main materials and components.
 
 **Response:**  
-The Spartan-7 Boolean board was chosen as it is the lab-standard FPGA platform for this project, equipped with adequate LUT resources for synthesizing adders and small SRAMs. Its on-board USB-UART bridge eliminates the need for any external USB-to-serial adapter. Python was chosen for the laptop-side application due to its rich ecosystem — `pyserial` handles serial communication cleanly, `matplotlib` enables rapid live plotting, and `numpy` facilitates efficient signal buffering. The entire BOM is zero additional cost as all components are available in the lab kit.
+The Spartan-7 Boolean board was chosen as the lab-standard FPGA platform for this project, equipped with sufficient LUT resources for synthesizing adders. Its on-board USB-UART bridge eliminates the need for any external USB-to-serial adapter. Python was chosen for the laptop-side application due to its rich ecosystem — pyserial handles serial communication cleanly, matplotlib enables rapid live plotting, and numpy facilitates efficient signal buffering.
 
 ## 9.3 Items to Procure
 
@@ -413,25 +394,25 @@ Tasks are split by domain: FPGA RTL design and Vivado implementation is handled 
 | Task ID | Task | Owner | Estimated Hours | Deadline | Dependency | Status |
 | ------- | ---- | ----- | ---------------: | -------- | ---------- | ------ |
 | T1 | `Finalize project concept` | `Team` | `2` | `Day 1` | `None` | `Done` |
-| T2 | `Design logic gate selection system` | `Shreya` | `3` | `Day 1` | `T1` | `In progress` |
-| T3 | `Implement basic gates on FPGA` | `Shreya` | `4` | `Day 2` | `T2` | `In progress` |
-| T4 | `Create UART data format` | `Varunraj / Shreya` | `3` | `Day 2` | `T3` | `Pending` |
-| T5 | `Develop Python serial receiver` | `Vibhuti` | `3` | `Day 2` | `T4` | `Pending` |
-| T6 | `Plot waveforms using Matplotlib` | `Vibhuti / Faiza` | `4` | `Day 3` | `T5` | `Pending` |
-| T7 | `Test truth table correctness` | `Varunraj / Faiza` | `3` | `Day 3` | `T3, T6` | `Pending` |
-| T8 | `Complete documentation` | `Varunraj` | `3` | `Day 4` | `Testing` | `In progress` |
-| T9 | `Final demo preparation` | `Team` | `2` | `Day 4` | `All tasks` | `Pending` |
+| T2 | `Design logic gate selection system` | `Shreya` | `1` | `Day 1` | `T1` | `In progress` |
+| T3 | `Implement basic gates on FPGA` | `Shreya` | `2.5` | `Day 1` | `T2` | `In progress` |
+| T4 | `Create UART data format` | `Shreya/Vibhuti` | `2` | `Day 1` | `T3` | `In progress` |
+| T5 | `Develop Python serial receiver` | `Vibhuti` | `1` | `Day 1` | `T4` | `Done` |
+| T6 | `Plot waveforms using Matplotlib` | `Vibhuti / Faiza` | `3` | `Day 1` | `T5` | `In progress` |
+| T7 | `Test truth table correctness` | `Varunraj / Faiza` | `3` | `Day 2` | `T3, T6` | `Pending` |
+| T8 | `Complete documentation` | `Varunraj` | `3` | `Day 2` | `Testing` | `In progress` |
+| T9 | `Final demo preparation` | `Team` | `2` | `Day 2` | `All tasks` | `Pending` |
 
 ## 10.3 Responsibility Split
 
 | Area | Main Owner | Support Owner |
 | ---- | ---------- | ------------- |
-| Concept | `Faiza` | `Varunraj` |
+| Concept | `Faiza` | `Shreya` |
 | Electronics | `Shreya` | `Faiza` |
-| Coding | `Shreya` | `Vibhuti` |
+| Coding | `Vibhuti` | `Varunraj` |
 | Visualization | `Vibhuti` | `Varunraj` |
-| Testing | `Varunraj` | `Faiza` |
-| Documentation | `Varunraj` | `Faiza` |
+| Testing | `Shreya` | `Vibhuti` |
+| Documentation | `Varunraj` | `-` |
 
 ---
 
@@ -482,14 +463,15 @@ Expected outcomes:
 - [ ] Documentation completed
 - [ ] Final build ready for review
 
-## 12 Update Log
+## 12. Update Log
 
 | Days | Planned Goal | What Actually Happened | What Changed | Next Steps |
 | ---- | ------------ | ---------------------- | ------------ | ---------- |
-| Day 1 | `Finalize concept and system architecture` | `Project idea was finalized as FPGA-based DVLSI waveform visualization platform` | `Shifted focus from frontend-only simulation to FPGA + Python integration` | `Start FPGA logic implementation` |
-| Day 2 | `Implement gates and decide communication format` | `Basic gate logic and ASCII UART format were planned` | `UART data format simplified to plain text for easy Python parsing` | `Test UART transmission` |
-| Day 3 | `Connect FPGA output to Python plotting` | `Python visualization approach using Matplotlib was finalized` | `Waveform plotting chosen instead of HDMI/VGA display` | `Verify waveforms with truth table` |
-| Day 4 | `Prepare final demo and documentation` | `README and explanation were refined for submission` | `Advanced circuits moved to stretch features` | `Complete final testing and submit` |
+| Day 1 | `Finalize concept and system architecture` | `Project idea was finalized as an FPGA-based live logic analyzer and waveform visualization dashboard` | `Shifted focus from frontend-only simulation to real FPGA + UART + browser-based visualization` | `Start FPGA RTL implementation` |
+| Day 2 | `Implement gates and decide communication format` | `Basic logic gate operations and UART packet format were planned` | `UART data format was simplified to comma-separated ASCII text for easy Python parsing` | `Test UART output using serial terminal` |
+| Day 3 | `Build software dashboard` | `Python Flask backend and HTML/CSS/JavaScript frontend were created in VS Code` | `Display method changed from Matplotlib plotting to a browser-based live waveform dashboard` | `Connect backend to COM13 serial data` |
+| Day 4 | `Implement FPGA UART transmission` | `Verilog RTL modules for logic selection, baud generation, and UART transmission were created in Vivado` | `Pure RTL FPGA implementation was selected as the main implementation path` | `Fix constraints and generate bitstream` |
+| Day 5 | `Prepare final demo and documentation` | `README, flowchart, testing plan, and build documentation were refined` | `Advanced/stretch features were separated from the core demo` | `Complete final hardware testing and record demo output` |
 
 ---
 
@@ -498,20 +480,19 @@ Expected outcomes:
 
 ## 13.1 Risk Register
 
-| Risk                                                                 | Type        | Likelihood | Impact | Mitigation Plan| Owner      |
-| -------------------------------------------------------------------- | ----------- | ---------- | ------ | ----------------------------------------------------------------------------------------------------- | ---------- |
-| `UART baud rate mismatch causes corrupted waveform data`             | `Technical` | `Medium`   | `High` | Match baud rate exactly on both FPGA and Python side; add a known start byte for frame synchronization | `Member 1` |
-| `Python matplotlib not fast enough for real-time updates`            | `Technical` | `Medium`   | `Medium` | Use `plt.pause()` with a small interval; consider buffering N samples before plotting               | `Member 2` |
-| `Vivado timing constraints fail for UART at target frequency`        | `Technical` | `Low`      | `High` | Use a clock divider for UART baud generation; avoid relying on PLL for low baud rates               | `Member 1` |
-| `COM port not recognized on laptop (driver issue)`                   | `Technical` | `Low`      | `High` | Pre-install CH340/CP2102 USB-UART drivers; test connection before building further                  | `Member 2` |
-| `SRAM simulation too large for Spartan-7 LUT resources`              | `Technical` | `Medium`   | `Low`  | Reduce SRAM depth (e.g., 16×8 bits); use FPGA BRAM primitives instead of LUT-based RAM             | `Member 1` |
+| Risk | Type | Likelihood | Impact | Mitigation Plan | Owner |
+| ---- | ---- | ---------- | ------ | --------------- | ----- |
+| `UART baud rate mismatch causes corrupted waveform data` | `Technical` | `Medium` | `High` | Keep FPGA baud generator and Python backend baud rate fixed at 115200; verify using a serial terminal before running the dashboard | `Member 1` |
+| `Incorrect FPGA pin constraints prevent bitstream generation` | `Technical` | `Medium` | `High` | Verify clock, switch, and UART TX pins from the Spartan-7 board documentation before implementation | `Member 1` |
+| `COM13 not recognized or occupied by another program` | `Technical` | `Medium` | `High` | Close Vivado serial terminal or other COM port tools before running the Flask backend; verify COM13 in Device Manager | `Member 2` |
+| `Browser dashboard does not update smoothly` | `Software` | `Low` | `Medium` | Limit stored samples, use periodic fetch requests, and keep waveform rendering lightweight using JavaScript Canvas | `Member 2` |
+| `FPGA output does not match truth table` | `Technical` | `Low` | `High` | Test each logic mode using all input combinations and compare A, B, Y, and Carry with expected values | `Member 1` |
+| `UART TX pin mapping is incorrect` | `Technical` | `Medium` | `High` | Confirm the actual FPGA package pin for UART TX rather than relying only on board labels | `Member 1` |
 
 ## 13.2 Biggest Unknown Right Now
 
-What is the single biggest uncertainty in your project at this stage?
-
 **Response:**  
-`The biggest uncertainty is whether the Python-side real-time plotting will be fast enough to display waveforms smoothly at the chosen UART transmission rate. If matplotlib updates are too slow relative to the incoming data rate, frames may be dropped or the plot may lag significantly. This will need to be tested early and may require adjusting the FPGA's data transmission interval.`
+`The biggest uncertainty at this stage is whether the FPGA UART TX pin and board constraints are correctly mapped for the selected Spartan-7 device. The RTL logic has been created, but successful bitstream generation and live waveform output depend on correct clock, switch, and UART pin assignments. Once the bitstream is generated and the board is connected through COM13, the Python Flask dashboard can be tested with real FPGA data.`
 
 ---
 
@@ -519,23 +500,26 @@ What is the single biggest uncertainty in your project at this stage?
 
 ## 14.1 Technical Testing Plan
 
-| What Needs Testing                         | How You Will Test It                                                                      | Success Condition                                                                                       |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `UART transmission from FPGA`              | `Connect to laptop and use a serial terminal (e.g., PuTTY or CoolTerm) to read raw bytes` | `Correct bytes received matching expected input/output values`                                          |
-| `Python serial reader`                     | `Send known test frames from a mock source and verify parsed values`                      | `All fields decoded correctly with no frame sync errors`                                                |
-| `Waveform plot (static)`                   | `Plot pre-recorded data arrays and verify visual correctness`                             | `Square wave waveforms render correctly with proper logic levels (0/1)`                                 |
-| `Live gate simulation (AND gate)`          | `Toggle FPGA switches and observe waveform changes in real time on the laptop`            | `Waveform updates within < 200 ms of switch toggle; output matches expected truth table`               |
-| `Adder simulation`                         | `Feed all 16 input combinations to 4-bit adder and compare waveform output to truth table`| `Sum and carry outputs match expected values for all input combinations`                               |
-| `SRAM read/write (stretch)`                | `Write known data to address locations, then read back and verify on the waveform display` | `Read data matches written data; address and data bus waveforms are correctly displayed`               |
+| What Needs Testing | How You Will Test It | Success Condition |
+| ------------------ | -------------------- | ----------------- |
+| `Verilog logic operations` | `Simulate or manually test switch combinations for AND, OR, XOR, and Half Adder modes` | `Output Y and Carry match the expected truth table` |
+| `UART baud generation` | `Check that FPGA baud generator uses the same baud rate as Python backend, preferably 115200` | `Serial data is readable without corrupted characters` |
+| `UART transmission from FPGA` | `Connect board through USB and open COM13 in a serial terminal such as PuTTY or CoolTerm` | `Packets like AND,1,0,0,0 are received correctly` |
+| `Python Flask serial backend` | `Run app.py and check whether COM13 shows CONNECTED` | `Backend receives FPGA UART packets and stores samples` |
+| `Browser waveform dashboard` | `Open http://127.0.0.1:5000 and toggle FPGA switches` | `A, B, Y/SUM, and Carry waveforms update live` |
+| `Gate output verification` | `Test all input combinations for each selected gate mode` | `Displayed output matches the expected Boolean operation` |
+| `Half Adder verification` | `Set Half Adder mode and test A/B combinations 00, 01, 10, 11` | `SUM = A XOR B and Carry = A AND B` |
+| `CSV export` | `Click Export CSV on the dashboard after receiving samples` | `waveform.csv is generated with Gate, A, B, Y, and C fields` |
 
 ## 14.2 Testing and Debugging Log
 
 | Date | Problem Found | Type | What You Tried | Result | Next Action |
 | ---- | ------------- | ---- | -------------- | ------ | ----------- |
-| `Day 1` | `Need to decide display method` | `Design` | `Compared HDMI/VGA and Python plotting` | `Python plotting selected as simpler option` | `Implement UART data transfer` |
-| `Day 2` | `ASCII format needed for UART` | `Technical` | `Designed simple format like NAND,101` | `Format finalized` | `Test with Python serial reader` |
-| `Day 3` | `Waveform needs channel separation` | `Software` | `Separated A, B, and Y into different arrays` | `Plotting method finalized` | `Connect live FPGA data` |
-| `Day 4` | `Documentation needed correction` | `Documentation` | `Removed old car/projector content` | `README aligned with FPGA project` | `Final review` |
+| `Day 1` | `Need to decide display method` | `Design` | `Compared VGA/HDMI, Matplotlib, and browser dashboard approaches` | `Browser dashboard selected as the most flexible option` | `Build Flask backend and frontend UI` |
+| `Day 2` | `Need simple UART format` | `Technical` | `Designed ASCII packet format like AND,1,0,0,0` | `Format finalized for easy backend parsing` | `Implement UART transmitter in Verilog` |
+| `Day 3` | `Waveform needs channel separation` | `Software` | `Separated A, B, Y/SUM, and Carry into independent waveform channels` | `Dashboard waveform structure finalized` | `Connect live FPGA data` |
+| `Day 4` | `Synthesis issue due to switch width mismatch` | `RTL` | `Corrected switch mapping and top module input width` | `Synthesis passed` | `Run implementation and generate bitstream` |
+| `Day 5` | `Bitstream issue due to invalid UART TX pin` | `Constraints` | `Reviewed .xdc pin assignments and identified UART TX package pin issue` | `Constraint file requires correction` | `Confirm actual UART TX FPGA package pin from board documentation` |
 
 ---
 
@@ -550,16 +534,14 @@ What is the single biggest uncertainty in your project at this stage?
 
 # 15. Build Documentation
 
-## 15.1 Fabrication Process (if any)
-
-Describe how the project was physically made.
+## 15.1 Fabrication Process
 
 **Response:**  
-`No major fabrication process was required because the project mainly uses an FPGA development board and a laptop. The physical setup consists of placing the FPGA board on the workbench, connecting it to the laptop through USB, and using the onboard switches and LEDs for interaction.`
+`No major physical fabrication was required because the project uses a Spartan-7 FPGA development board and a laptop. The physical setup consists of connecting the FPGA board to the laptop through the onboard USB-UART interface. The board switches are used as digital inputs, and the laptop displays the live waveform dashboard.`
 
-`The main build process involved FPGA logic design, UART communication setup, and Python waveform visualization. The FPGA design was created using Vivado/Vitis, while the Python program was developed to receive serial data and plot waveforms using Matplotlib.`
+`The main build process involved two parts: FPGA RTL development and software dashboard development. On the FPGA side, Verilog modules were created in Vivado for selecting Boolean operations, generating baud rates, and transmitting UART data. On the software side, a Python Flask backend was developed in VS Code to read UART data from COM13, and a browser-based frontend was created using HTML, CSS, and JavaScript Canvas to display live waveforms.`
 
-`Minor setup work included labeling the switches for input A, input B, and gate selection so that users can understand how to interact with the board. The system was revised by simplifying the display method from direct HDMI/VGA output to laptop-based Python visualization, making the project easier to implement and demonstrate within the available time.`
+`The project was revised from a simple plotting-based idea to a more complete live web dashboard. This made the system more interactive and presentation-friendly because the waveform, connection status, sample count, selected mode, and CSV export can all be viewed from a single browser interface.`
 
 ## 16. Build Photos
 
@@ -658,7 +640,7 @@ Before submission, confirm that:
 - [x] Team details are complete
 - [x] Project description is complete
 - [x] Inspiration sources are included
-- [x] Sketches / block diagrams are added
+- [x] Sketches/block diagrams are added
 - [x] BOM is complete
 - [x] Budget summary is complete
 - [ ] Vivado RTL schematic screenshot is added
