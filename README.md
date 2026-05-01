@@ -324,31 +324,25 @@ Include:
 **Response:**  
 
 - **Startup behavior (FPGA):**  
-  On power-up, the FPGA initializes the UART module with the configured baud rate, resets the RTL circuit to a known state, and begins sampling inputs from the on-board switches.
+   Upon powering the Spartan-7 board, the system initiates a Power-On Reset (POR) sequence using a 4-cycle Global Set/Reset (GSR) shift register (rst_sr). This ensures all internal flip-flops, UART transmission state machines, and SRAM cell registers initialize to a known, stable zero state before accepting inputs.
 
 - **Input handling (FPGA):**  
-  DIP switch states are read each clock cycle. A mode-selection switch determines which circuit is active (e.g., AND gate, full adder, SRAM). The selected input bus is passed to the corresponding RTL module.
+  Input handling operates continuously on every positive clock edge. The system reads the states of the 16 onboard slide switches (sw[15:0]). The switches are logically partitioned: sw[15:14] act as the mode selector (multiplexer control), sw[13:12] toggle advanced debugging features, and sw[2:0] act as the physical inputs (A, B, Cin, WL, D, WE) routed directly to the logic circuits. A 2-Flip-Flop synchronizer safely handles the physical debouncing and edge detection for sw[0].
 
-- **Processing / Decision logic (FPGA):**  
-  The active RTL module (gate/adder/SRAM) computes outputs from the given inputs. A sampling counter triggers a UART transmission at a fixed interval (e.g., every 1 ms), packaging both input and output bus values into a data frame.
+- **Sensor/State Reading:**  
+  While the system does not utilize external environmental sensors, it actively "senses" and captures internal hardware metrics. It calculates propagation delay by counting clock cycles between an input edge and an output change, and acts as a glitch detector by measuring pulse widths on the input pins to flag anomalies shorter than 50ns (5 clock cycles).
 
-- **Communication logic (FPGA → Laptop):**  
-  The UART TX module serializes the data frame and transmits it at 9600 baud via the USB-UART bridge. Each frame contains a start byte, input values, output values, and an end/checksum byte.
+- **Decision Logic:**
+    The core decision logic is handled by a high-speed multiplexer (implemented as a case statement). Based on the mode bits (sw[15:14]), the logic instantly decides which digital circuit (Inverter, Logic Gates, 1-bit Full Adder, or 6T SRAM model) has active control over the output buses. All logic gates are evaluated in parallel continuously, but the decision logic determines which result is latched for output.
+  
+- **Output Behavior:**
+    Output behavior is split into two immediate hardware responses. First, the resulting logic states are routed directly to the onboard LEDs (led[5:0]) for instantaneous visual feedback. Second, the input and output states are converted from binary to hexadecimal and routed to a 1kHz multiplexed 7-segment display driver, driving the anodes and cathodes to display the current states.
 
-- **Output behavior (FPGA):**  
-  Computed output values are also driven to on-board LEDs for immediate visual feedback.
+- **Communication Logic:**
+    The communication logic relies on an 8N1 UART transmitter operating at 115200 baud. A periodic timer checks whether 200ms has passed or if any physical switch has changed state. If either condition is true, a trigger fires. The system latches the current inputs, outputs, mode string, and metrics, formatting them into a strict 72-byte JSON string (e.g., {"m":"GATE","i":"01","o":"3F",...}\n). A 3-state Finite State Machine (FSM) then kicks in, shifting this packet out byte-by-byte to the PC.
 
-- **Startup behavior (Python):**  
-  The Python script opens the COM port at the matching baud rate, initializes a matplotlib figure with separate subplots for each signal channel, and starts reading incoming frames.
-
-- **Input handling (Python):**  
-  Incoming bytes are parsed frame-by-frame. Each valid frame is decoded into individual signal values (e.g., A, B, Sum, Carry).
-
-- **Output behavior (Python):**  
-  Each decoded signal value is appended to a time-series buffer and the waveform plot is updated in real time using `matplotlib`'s animation or manual `draw()`/`pause()` loop.
-
-- **Reset behavior:**  
-  The Python script supports `Ctrl+C` to cleanly close the serial port. The FPGA can be reset via its on-board reset button, which reinitializes all RTL modules and restarts the UART stream.
+- **Reset Behavior:**
+    When the internal reset is triggered, the system immediately aborts any active UART transmissions and resets the packet FSM to the IDLE state. The internal 6T SRAM behavioral latch (sram_q), propagation counters, glitch flags, and edge detection synchronizers are forcefully cleared to 0, readying the board for a fresh experiment.
 
 ## 8.3 Code Flowchart
 
