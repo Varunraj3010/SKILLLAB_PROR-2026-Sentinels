@@ -76,7 +76,7 @@ By the final review, this README should clearly show:
 
 ## 1.4 One-Line Pitch
 
-`An FPGA-based logic analyzer that simulates digital circuits — from basic logic gates to adders and SRAMs — and streams real-time input/output waveforms to a laptop via UART for live visualization using Python and matplotlib.`
+`An FPGA-based logic analyzer that simulates digital circuits and streams real-time input/output waveforms to a laptop via UART for live visualization using Python and matplotlib.`
 
 ## 1.5 Expanded Project Idea
 
@@ -110,7 +110,7 @@ List what inspired the project.
 What makes your project original?
 
 **Response:**  
-`Most logic analyzers are passive measurement tools — they only capture signals from external circuits. This project is a self-contained system where the FPGA itself generates and simulates the digital circuit behavior (gates, adders, SRAMs), and simultaneously streams the waveform data to a PC for real-time plotting. The combination of on-chip RTL simulation + UART streaming + Python-based waveform visualization in a single integrated workflow makes this an original educational and prototyping tool.`
+`Most logic analyzers are passive measurement tools — they only capture signals from external circuits. This project is a self-contained system where the FPGA itself generates and simulates the digital circuit behavior (gates, adders), and simultaneously streams the waveform data to a PC for real-time plotting. The combination of on-chip RTL simulation + UART streaming + Python-based waveform visualization in a single integrated workflow makes this an original educational and prototyping tool.`
 
 ---
 
@@ -121,7 +121,7 @@ What makes your project original?
 Describe exactly how a user will use the project. Make it a story.
 
 **Response:**  
-`Rahul, an electronics student, wants to verify how a 4-bit ripple carry adder behaves across all input combinations. He opens Vivado, selects the "4-bit Adder" mode via a switch configuration on the Spartan-7 Boolean board, and programs the FPGA. The FPGA begins sweeping through input combinations and computing carry and sum outputs in hardware. On his laptop, Rahul runs the Python script, which opens a serial port and starts reading the streamed binary data. Within seconds, a matplotlib window appears, displaying clean square-wave waveforms for each input bit, the sum bits, and the carry-out — updating live as the FPGA cycles through inputs. Rahul can now visually confirm glitches, propagation behavior, and output correctness without needing an oscilloscope or external logic analyzer.`
+`Rahul, an electronics student, wants to verify how a 4-bit adder behaves across all input combinations. He opens Vivado, selects the "4-bit Adder" mode via a switch configuration on the Spartan-7 Boolean board, and programs the FPGA. The FPGA begins sweeping through input combinations and computing carry and sum outputs in hardware. On his laptop, Rahul runs the Python script, which opens a serial port and starts reading the streamed binary data. Within seconds, a matplotlib window appears, displaying clean square-wave waveforms for each input bit, the sum bits, and the carry-out — updating live as the FPGA cycles through inputs. Rahul can now visually confirm glitches, propagation behavior, and output correctness without needing an oscilloscope or external logic analyzer.`
 
 ---
 
@@ -136,7 +136,7 @@ Describe exactly how a user will use the project. Make it a story.
 What is the smallest version of this project that still delivers the core experience?
 
 **Response:**  
-`A working system where a single logic gate (e.g., AND gate) is synthesized on the FPGA, its inputs and outputs are sampled, transmitted via UART to the laptop, and displayed as a live waveform plot using Python and matplotlib. This MVP validates the full signal chain from FPGA → UART → Python → plot.`
+`A working system where a single logic gate (e.g., NAND gate) is synthesized on the FPGA, its inputs and outputs are sampled, transmitted via UART to the laptop, and displayed as a live waveform plot using Python and matplotlib. This validates the full signal chain from FPGA → UART → Python → plot.`
 
 ## 4.3 Stretch Features
 
@@ -193,15 +193,15 @@ Include:
 - app interaction if any.
 
 **Response:**  
-`Input: Digital test vectors (switch positions or internally generated patterns) are fed as inputs to the synthesized circuit on the FPGA.`
+`Input: Digital test vectors (switch positions) are fed as inputs to the synthesized circuit on the FPGA.`
 
-`Processing: The Spartan-7 FPGA (Boolean board) runs RTL logic implemented in Verilog/VHDL — simulating logic gates, adders, or SRAMs. It samples both the inputs and the computed outputs at regular intervals and formats them into a serial data stream.`
+`Processing: The Spartan-7 FPGA (Boolean board) runs RTL logic implemented in Verilog/VHDL — simulating logic gates or adders. It samples both the inputs and the computed outputs at regular intervals and formats them into a serial data stream.`
 
 `Output: The formatted data is transmitted via UART (USB-to-UART bridge on the board) to the laptop's COM port. A Python script reads this stream, parses the signal values, and plots them as time-domain logic waveforms using matplotlib.`
 
 `Physical Structure: The Spartan-7 Boolean board serves as the hardware platform. It connects to the laptop via a standard USB cable (which carries both power and UART data through an on-board USB-UART bridge).`
 
-`App Interaction: A Python script (waveform_viewer.py) running on the laptop handles serial communication (via pyserial) and real-time plotting (via matplotlib). No external app or Wi-Fi is needed.`
+`App Interaction: A Python script (app.py) running on the laptop handles serial communication (via pyserial) and real-time plotting (via matplotlib). No external app or Wi-Fi is needed.`
 
 ## 5.3 Input / Output Map
 
@@ -212,7 +212,6 @@ Include:
 | `UART TX (FPGA → Laptop)`    | `Output`   | `Streams sampled input/output waveform data serially to the laptop`   |
 | `Python (pyserial)`          | `Process`  | `Receives and parses serial data from the FPGA`                       |
 | `matplotlib (Python)`        | `Output`   | `Plots input and output waveforms in real time on the laptop screen`  |
-| `FPGA LEDs`                  | `Output`   | `Visual confirmation of output logic levels on-board`                 |
 
 ---
 
@@ -223,7 +222,6 @@ Include:
 Add an early sketch of the full idea.
 
 Insert image below:  
-`[Upload image and link here]`
 
 ```
 
@@ -261,9 +259,8 @@ Add a sketch with labels showing:
 | -------------------------------------- | --------:| --------------------------------------------------------------- |
 | `Xilinx Spartan-7 Boolean Board`       | `1`      | Main FPGA platform for RTL synthesis and UART transmission      |
 | `USB Cable (USB-A to Micro-USB)`       | `1`      | Power + UART communication between FPGA board and laptop        |
-| `Laptop / PC`                          | `1`      | Runs Python script for serial reading and waveform plotting     |
-| `DIP Switches (on-board)`             | `—`      | Select circuit mode and set manual input logic levels           |
-| `LEDs (on-board)`                     | `—`      | Real-time output indicator for logic levels on the board        |
+| `Laptop`                          | `1`      | Runs Python script for serial reading and waveform plotting     |
+| `Switches (on-board)`             | `—`      | Select circuit mode and set manual input logic levels           |
 
 ## 7.2 Wiring Plan
 
@@ -281,7 +278,7 @@ Describe the main electrical connections.
 Insert a hand-drawn or software-made circuit diagram.
 
 **Insert image below:**  
-`[Upload image and link here]`
+<img width="1562" height="729" alt="image" src="https://github.com/user-attachments/assets/062db688-241a-41d0-b6d4-cbf2e3eda879" />
 
 ## 7.4 Power Plan
 
