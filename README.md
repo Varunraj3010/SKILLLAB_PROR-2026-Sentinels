@@ -106,7 +106,7 @@ Check all that apply.
 
 `Input: Digital test vectors (switch positions) are fed as inputs to the synthesized circuit on the FPGA.`
 
-`Processing: The Spartan-7 FPGA (Boolean board) uses a MicroBlaze soft processor running C code to read input switches via AXI GPIO, compute logic gate functions (AND, OR, NAND, NOR, XOR, XNOR) in software, and stream the input and output values along with gate name over UART for real-time waveform plotting on a Python/Matplotlib host.`
+`Processing: The Spartan-7 FPGA (Boolean board) uses a MicroBlaze soft processor running C code to read input switches via AXI GPIO, compute logic gate functions (AND, OR, NAND, NOR, XOR, XNOR) in , and stream the input and output values along with gate name over UART for real-time waveform plotting on a Python/Matplotlib host.`
 
 `Output: The formatted data is transmitted via UART (USB-to-UART bridge on the board) to the laptop's COM port. A Python script reads this stream, parses the signal values, and plots them as time-domain logic waveforms using matplotlib.`
 
@@ -163,7 +163,7 @@ Check all that apply.
 
 Describe the main electrical connections.
 
-`The Spartan-7 Boolean board is connected to the laptop via a USB cable. The on-board USB-to-UART bridge exposes the FPGA’s UART as a virtual COM port. The MicroBlaze processor, running C code, reads the on-board switches through AXI GPIO, computes the selected logic function in software, and sends the input/output data along with gate information over UART.
+`The Spartan-7 Boolean board is connected to the laptop via a USB cable. The on-board USB-to-UART bridge exposes the FPGA’s UART as a virtual COM port. The MicroBlaze processor, running C code, reads the on-board switches through AXI GPIO, computes the selected logic function in , and sends the input/output data along with gate information over UART.
 No external wiring is required — all inputs come from the onboard switches, outputs are processed internally, and data is transmitted to the laptop through the USB-UART bridge for real-time waveform plotting.`
 
 ## 7.3 Circuit Diagram / Architecture Diagram
@@ -183,9 +183,9 @@ No external wiring is required — all inputs come from the onboard switches, ou
 
 ---
 
-# 8. Software Planning
+# 8.  Planning
 
-## 8.1 Software Tools
+## 8.1  Tools
 
 | Tool / Platform         | Purpose                                                          |
 | ----------------------- | ---------------------------------------------------------------- |
@@ -195,7 +195,7 @@ No external wiring is required — all inputs come from the onboard switches, ou
 | `pyserial `     | `Reading UART data from the FPGA via the COM port`                 |
 | `matplotlib`    | `Real-time plotting of logic waveforms`                            |
 
-## 8.2 Software Logic / Algorithm
+## 8.2  Logic / Algorithm
 
 ### Python Script Breakdown
 
@@ -308,7 +308,8 @@ No external wiring is required — all inputs come from the onboard switches, ou
 Insert a flowchart showing your code logic.
 
 **Insert image below:**  
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/37810154-e481-41ca-bc97-08edd52d618d" />
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/928b48d9-36db-4ed6-87e6-96d0f26e1373" />
+
 ---
 
 # 9. Bill of Materials
@@ -345,7 +346,7 @@ The Spartan-7 Boolean board was chosen as the lab-standard FPGA platform for thi
 
 ## 9.5 Budget Reflection
 
-Not applicable — the entire project uses lab-provided hardware (Spartan-7 Boolean board, USB cable, laptop) and free open-source software tools (Vivado, Python, pyserial, matplotlib). There are no procurement costs.
+Not applicable — the entire project uses lab-provided hardware (Spartan-7 Boolean board, USB cable, laptop) and free open-source  tools (Vivado, Python, pyserial, matplotlib). There are no procurement costs.
 
 ---
 
@@ -427,7 +428,7 @@ Expected outcomes:
 
 | Days | Planned Goal | What Actually Happened | What Changed | Next Steps |
 |------|--------------|------------------------|--------------|----------|
-| Day 1 | Finalize concept and system architecture | Project finalized as FPGA-based Logic Analyzer using MicroBlaze + live waveform visualization | Shifted from pure RTL to MicroBlaze + C software implementation for faster development | Create MicroBlaze system in Vivado and write basic C code |
+| Day 1 | Finalize concept and system architecture | Project finalized as FPGA-based Logic Analyzer using MicroBlaze + live waveform visualization | Shifted from pure RTL to MicroBlaze + C  implementation for faster development | Create MicroBlaze system in Vivado and write basic C code |
 | Day 2 | Implement logic, UART communication, and Python visualization | MicroBlaze C code for gate logic + UART transmission completed. Python script with pyserial + Matplotlib live plotting successfully implemented | Dropped browser-based dashboard in favor of Matplotlib for simplicity and real-time performance. Logic functions implemented in C instead of Verilog RTL | Testing with different gate combinations and preparing documentation |
 
 ---
@@ -442,7 +443,7 @@ Expected outcomes:
 | UART baud rate mismatch causes corrupted data | Technical | Medium | High | Fix baud rate at 9600 (or 115200) in both MicroBlaze C code and Python script | Vibhuti/Shreya |
 | Incorrect FPGA pin constraints for switches or UART | Technical | Medium | High | Double-check XDC constraints file with Boolean board documentation for GPIO and UART pins | Vibhuti/Shreya |
 | COM port (COM13) not recognized or already in use | Technical | Medium | High | Close Vivado Serial Terminal and other tools before running Python script; verify port in Device Manager | Varunraj/Faiza |
-| Matplotlib waveform plot not updating smoothly | Software | Low | Medium | Reduce MAX_POINTS, optimize animation interval, and limit data processing per frame |Vibhuti|
+| Matplotlib waveform plot not updating smoothly |  | Low | Medium | Reduce MAX_POINTS, optimize animation interval, and limit data processing per frame |Vibhuti|
 | Logic output does not match expected truth table | Technical | Low | High | Thoroughly test each gate with all input combinations in C code and verify on hardware | Varunraj |
 | MicroBlaze system fails to generate bitstream or program | Technical | Medium | High | Validate AXI GPIO and UART IP configuration in Vivado Block Design before generating bitstream | Faiza/Shreya |
 
@@ -472,7 +473,7 @@ Once the bitstream is generated and the board is connected, the Python script us
 |------|---------------|------|----------------|--------|-------------|
 | Day 1 | COM port not connecting in Python script | Technical | Changed COM port number and checked Device Manager | COM13 detected but "Access Denied" error occurred | Close all other serial tools before running script |
 | Day 1 | No data appearing in Matplotlib plot | Technical | Added debug prints and checked serial baud rate | Data was being sent but animation wasn't updating | Increased animation interval and optimized animate() function |
-| Day 2 | Waveform plot lagging / not smooth | Software | Reduced MAX_POINTS and increased update interval | Plot became smoother but less responsive | Fine-tune update rate and deque size for better balance |
+| Day 2 | Waveform plot lagging / not smooth |  | Reduced MAX_POINTS and increased update interval | Plot became smoother but less responsive | Fine-tune update rate and deque size for better balance |
 
 
 ---
