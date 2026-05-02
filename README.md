@@ -308,7 +308,7 @@ No external wiring is required — all inputs come from the onboard switches, ou
 Insert a flowchart showing your code logic.
 
 **Insert image below:**  
-<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/928b48d9-36db-4ed6-87e6-96d0f26e1373" />
+<img width="1671" height="941" alt="image" src="https://github.com/user-attachments/assets/d3543a45-9c52-4ee0-9a9d-b69275bd2168" />
 
 ---
 
