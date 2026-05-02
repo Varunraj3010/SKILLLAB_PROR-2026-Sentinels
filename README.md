@@ -11,7 +11,7 @@
 | `Varunraj Bhirud` | `Research` | `Documentation`|`Ideation`|
 | `Vibhuti Sawant`| `UI Design`|`Debugging`|`Designing visual platform`|
 | `Faiza Shaikh`|`Enhancement research`| `Prototyping`|`Creative thinking`|
-| `Shreya Korgaonkar` | `Implementation` | `Debugging`  | `Knowledge of Vitis and Xilinx SDK`|
+| `Shreya Korgaonkar` | `Implementation` | `Debugging`  | `Knowledge of MicroBlaze and Xilinx SDK`|
 
 ## 1.3 Project Title
 
