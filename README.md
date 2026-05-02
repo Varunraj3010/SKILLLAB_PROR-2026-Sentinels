@@ -157,7 +157,7 @@ Check all that apply.
 | `Xilinx Spartan-7 Boolean Board`       | `1`      | Main FPGA platform for RTL synthesis and UART transmission      |
 | `USB Cable (USB-A to Micro-USB)`       | `1`      | Power + UART communication between FPGA board and laptop        |
 | `Laptop`                          | `1`      | Runs Python script for serial reading and waveform plotting     |
-| `Switches (on-board)`             | `—`      | Select circuit mode and set manual input logic levels           |
+| `Switches (on-board)`             | `5`      | Select circuit mode and set manual input logic levels           |
 
 ## 7.2 Wiring Plan
 
