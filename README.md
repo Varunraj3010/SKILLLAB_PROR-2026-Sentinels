@@ -15,7 +15,7 @@
 
 ## 1.3 Project Title
 
-`"FPGA Logic Analyzer"`
+`FPGA-based logic analyzer`
 
 ## 1.4 One-Line Pitch
 
